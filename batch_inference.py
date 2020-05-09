@@ -1,14 +1,17 @@
 from __future__ import print_function
+
 import argparse
-from datetime import datetime
+import click
+import cv2
 import os
+from os import path as osp
+import scipy.io as sio
+import scipy.misc
 import sys
 import time
-import scipy.misc
-import scipy.io as sio
-import cv2
+from datetime import datetime
 from glob import glob
-import click
+from utils.utils import resize_image
 
 from utils.image_reader import UnlabeledImageReader
 
@@ -166,6 +169,10 @@ def main(data_dir, checkpoint, output):
     # evaluate prosessing
     if not os.path.exists(output):
         os.makedirs(output)
+    overlay_dir = os.path.join(output, 'overlay')
+    if not os.path.exists(overlay_dir):
+        os.makedirs(overlay_dir)
+
     # Iterate over training steps.
     for step, im in enumerate(reader.image_list):
         parsing_ = sess.run(pred_all)
@@ -175,7 +182,10 @@ def main(data_dir, checkpoint, output):
 
         msk = decode_labels(parsing_, num_classes=N_CLASSES)
         parsing_im = Image.fromarray(msk[0])
-        parsing_im.save(os.path.join(output, os.path.basename(im)))
+        mask_path = os.path.join(output, os.path.basename(im))
+        parsing_im.save(mask_path)
+
+        postprocess_image(im, mask_path, overlay_dir)
 
         # parsing_im.save('{}/{}_vis.png'.format(parsing_dir, img_id))
         # cv2.imwrite('{}/{}.png'.format(parsing_dir, img_id), parsing_[0, :, :, 0])
@@ -185,6 +195,27 @@ def main(data_dir, checkpoint, output):
 
     coord.request_stop()
     coord.join(threads)
+
+
+def postprocess_image(img_path, mask_path, output_dir=None):
+    image = cv2.imread(img_path)
+    mask = cv2.imread(mask_path, 0)
+
+    resized_image = resize_image(image, expected_size=512, pad_value=0)
+    ret, thresh1 = cv2.threshold(mask, 1, 255, cv2.THRESH_BINARY)
+    resized_mask = resize_image(thresh1, expected_size=512, pad_value=0)
+    masked_image = cv2.bitwise_and(resized_image, resized_image, mask=resized_mask)
+
+    name, ext = osp.splitext(osp.basename(mask_path))
+    if output_dir is None:
+        output_dir = osp.split(mask_path)[0]
+    no_bcg_path = osp.join(output_dir, (name + '_no_bcg' + ext))
+    resized_mask_path = osp.join(output_dir, (name + '_mask' + ext))
+
+    cv2.imwrite(str(resized_mask_path), resized_mask)
+    cv2.imwrite(str(no_bcg_path), masked_image)
+    print('Outputs were written to %s' % output_dir)
+
 
 
 if __name__ == '__main__':
