@@ -27,7 +27,7 @@ cd ..
 
 # Build docker image
 docker image build -t fitting_room/segmentation:latest .
-docker run --runtime=nvidia -it --name cihp_testing -v .:/code fitting_room/segmentation:test /bin/bash
+docker run --runtime=nvidia -it --name human_segmentation -v .:/code fitting_room/segmentation:test /bin/bash
 ```
 
 ### Inference
@@ -35,5 +35,3 @@ docker run --runtime=nvidia -it --name cihp_testing -v .:/code fitting_room/segm
 python batch_inference.py --data_dir /data/images/ --output /data/segmentations/ --checkpoint ./checkpoint/CIHP_pgn
 ```
 Masked source images will as well as resized masks will be written to `{OUTPUT_DIR}/overlay` 
-
-
