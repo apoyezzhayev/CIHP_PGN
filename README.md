@@ -34,9 +34,6 @@ docker run --runtime=nvidia -it --name cihp_testing -v .:/code fitting_room/segm
 ```
 python batch_inference.py --data_dir /data/images/ --output /data/segmentations/ --checkpoint ./checkpoint/CIHP_pgn
 ```
-For params look at 
-```bash
-python batch_inference.py --help
-```
+Masked source images will as well as resized masks will be written to `{OUTPUT_DIR}/overlay` 
 
 
