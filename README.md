@@ -32,6 +32,6 @@ docker run --runtime=nvidia -it --name human_segmentation -v .:/code fitting_roo
 
 ### Inference
 ```
-python batch_inference.py --data_dir /data/images/ --output /data/segmentations/ --checkpoint ./checkpoint/CIHP_pgn
+python /code/batch_inference.py --data_dir /data/images/ --output /data/segmentations/ --checkpoint /checkpoint
 ```
 Masked source images will as well as resized masks will be written to `{OUTPUT_DIR}/overlay` 
