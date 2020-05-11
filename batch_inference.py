@@ -210,7 +210,7 @@ def postprocess_image(img_path, mask_path, output_dir=None):
     if output_dir is None:
         output_dir = osp.split(mask_path)[0]
     no_bcg_path = osp.join(output_dir, (name + '_no_bcg' + ext))
-    resized_mask_path = osp.join(output_dir, (name + '_mask' + ext))
+    resized_mask_path = osp.join(output_dir, (name + '_no_bcg_mask' + ext))
 
     cv2.imwrite(str(resized_mask_path), resized_mask)
     cv2.imwrite(str(no_bcg_path), masked_image)
