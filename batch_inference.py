@@ -220,5 +220,3 @@ def postprocess_image(img_path, mask_path, output_dir=None):
 
 if __name__ == '__main__':
     main()
-
-##############################################################333

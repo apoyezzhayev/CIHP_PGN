@@ -1,7 +1,9 @@
 Pillow==6.1.0
 protobuf
-matplotlib
-numpy
-scipy
-opencv-python
+matplotlib==2.2.5
+numpy==1.16.0
+scipy==1.0.0
+opencv-python==4.2.0.32
 click
+tqdm
+pathlib
